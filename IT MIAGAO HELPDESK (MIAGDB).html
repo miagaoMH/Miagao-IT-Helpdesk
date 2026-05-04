@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Miagao Municipal Hall IT Helpdesk</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      .tab-content { display: none; }
+      .tab-content.is-active { display: block; }
+
+     /* GET Month Colors */
+      .has-text-primary {
+       color: #0a0007  !important;}
+
+    </style>
+  </head>
+
+
+  <body>
+    <section class="hero is-primary is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">Miagao Municipal Hall IT Helpdesk</h1>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs is-centered is-boxed is-medium mt-4">
+      <ul>
+        <li class="tab-link is-active" data-tab="tab-entry">
+          <a><span class="icon is-small"><i class="fas fa-edit"></i></span><span>Data Entry Form</span></a>
+        </li>
+        <li class="tab-link" data-tab="tab-queue">
+          <a><span class="icon is-small"><i class="fas fa-list-ol"></i></span><span>View Queuing</span></a>
+        </li>
+        <li class="tab-link" data-tab="tab-finished">
+          <a><span class="icon is-small"><i class="fas fa-check-circle"></i></span><span>Finished Task</span></a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="container p-4">
+      <div id="tab-entry" class="tab-content is-active">
+        <h2 class="title is-4 mb-5">Data Entry Form</h2>
+        <form id="form" class="m-4 pl-4">
+          <div class="field">
+            <label class="label">Client Name</label>
+            <div class="control">
+              <input class="input" type="text" name="Client Name" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Department/Office</label>
+            <div class="control">
+              <input class="input" list="category-options" name="Department/Office" required />
+              <datalist id="category-options">
+                <option value="Information Center (InfoCen)">
+                <option value="Accounting Office">
+                <option value="Treasurer Office">
+                <option value="Engineering Office (EC)">
+                <option value="Bids and Awards Committee (BAC)">
+                <option value="Tourism Office">
+                <option value="Budget Office (MBO)">
+                <option value="Mayor's Office (MO)">
+                <option value="General Services Office (GSO)">                
+                <option value="Municipal Social Welfare Development Office (MSWDO)">
+                <option value="Assessor Office">
+                <option value="Human Resources Office (HRO)">
+                <option value="Department of the Interior and Local Government (DILG)">
+                <option value="Municipal Health Office (MHO)">
+                <option value="Municipal Economic Enterprise Office (MEEO)">
+                <option value="Municipal Legal Office (MLO)">
+                <option value="Agriculturist Office">
+                <option value="Municipal Civil Registrar's Office (MCRO)">
+                <option value="Municipal Planning & Development Coordinator’s Office (MPDC)">
+            <!--<option value="">
+                <option value="">
+                <option value="">
+                <option value="">
+                <option value="">-->
+              </datalist>  
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Subject</label>
+            <div class="control">
+              <input class="input" type="text" name="Subject" placeholder="PC, Laptop, Internet/Wifi, or Printer"/>
+            </div>
+          </div>
+
+        <div class="field">
+          <label class="label">Issue Description</label>
+          <div class="control">
+            <textarea 
+              class="textarea" 
+              name="Issue Description" 
+              placeholder="Describe when the issue started, how it occured, and how it happend"
+              required
+            ></textarea>
+          </div>
+        </div>
+
+          <div class="field">
+            <label class="label">Upload Document (Optional)</label>
+            <div class="control">
+              <div class="file has-name is-fullwidth">
+                <label class="file-label">
+                  <input class="file-input" type="file" id="fileInput" />
+                  <span class="file-cta">
+                    <span class="file-icon"><i class="fas fa-upload"></i></span>
+                    <span class="file-label"> Choose a file… </span>
+                  </span>
+                  <span class="file-name" id="fileNameDisplay"> No file selected </span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-primary" type="submit" id="submit-button">Submit</button>
+            </div>
+            <div class="control">
+              <button class="button is-danger" type="button" id="cancel-button">Erase</button>
+            </div>
+          </div>
+        </form>
+        <div id="message" style="display: none; margin: 20px; padding: 10px; border-radius: 4px; font-weight: bold;"></div>
+      </div>
+
+      <!-- VIEW QUEUING -->
+      <div id="tab-queue" class="tab-content">
+        <h2 class="title is-4 mb-5">Current Queuing</h2>
+        <div class="has-text-right mb-2">
+          <button class="button is-small is-light" onclick="refreshData(true)">
+            <span class="icon"><i class="fas fa-history"></i></span>
+            <span>Load All History</span>
+          </button>
+        </div>
+        <div id="queue-container">
+          <div class="box"><p class="has-text-centered has-text-grey">Loading queue...</p></div>
+        </div>
+      </div>
+
+
+      <!-- VIEW QUEUING -->
+      <div id="tab-finished" class="tab-content">
+        <h2 class="title is-4 mb-5">Finished Tasks</h2>
+        <div class="has-text-right mb-2">
+          <button class="button is-small is-light" onclick="refreshData(true)">
+            <span class="icon"><i class="fas fa-history"></i></span>
+            <span>Load All History</span>
+          </button>
+        </div>
+        <div id="finished-container">
+          <div class="box"><p class="has-text-centered has-text-grey">Loading completed tasks...</p></div>
+        </div>
+      </div>
+
+
+    <!-- SCRIPT -->
+    <script>
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwFPPhkDSiKOwJWRayGfba37tZPrPVQxCSjz-5mpIyC_QitbhUa_SDwwyUw_qZWcTAIOw/exec?view=all";
+
+      // 1. Tab Logic & Data Refresh Trigger
+      const tabLinks = document.querySelectorAll('.tab-link');
+      const tabContents = document.querySelectorAll('.tab-content');
+
+      tabLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          tabLinks.forEach(item => item.classList.remove('is-active'));
+          tabContents.forEach(content => content.classList.remove('is-active'));
+          link.classList.add('is-active');
+          
+          const targetId = link.getAttribute('data-tab');
+          document.getElementById(targetId).classList.add('is-active');
+
+          // Trigger data refresh when opening view tabs
+          if (targetId === 'tab-queue' || targetId === 'tab-finished') {
+            refreshData();
+          }
+        });
+      });
+
+      // 2. Ticket ID Generator
+      function generateTicketId() {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const year = String(now.getFullYear()).slice(-2);
+        const randomPart = Math.floor(1000 + Math.random() * 9000);
+        return `TKT-${month}${day}${year}-${randomPart}`;
+      }
+
+      // 3. Form & File Upload Logic
+      const form = document.getElementById("form");
+      const fileInput = document.getElementById("fileInput");
+      const fileNameDisplay = document.getElementById("fileNameDisplay");
+      const messageDiv = document.getElementById("message");
+      const submitButton = document.getElementById("submit-button");
+
+      fileInput.addEventListener("change", function() {
+        fileNameDisplay.textContent = this.files.length > 0 ? this.files[0].name : "No file selected";
+      });
+
+      async function uploadFile(file) {
+        return new Promise((resolve, reject) => {
+          const fr = new FileReader();
+          fr.onload = (e) => {
+            const data = e.target.result.split(",");
+            resolve({ 
+              fileName: file.name, 
+              mimeType: data[0].match(/:(\w.+);/)[1], 
+              data: data[1] 
+            });
+          };
+          fr.onerror = reject;
+          fr.readAsDataURL(file);
+        });
+      }
+
+      // 4. Form Submission POST
+      form.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        messageDiv.textContent = "Submitting...";
+        messageDiv.style.display = "block";
+        messageDiv.style.backgroundColor = "beige";
+        submitButton.disabled = true;
+
+        try {
+          const formData = new FormData(this);
+          const formDataObj = {};
+          formData.forEach((value, key) => { formDataObj[key] = value; });
+
+          const newId = generateTicketId();
+          formDataObj["Ticket ID"] = newId;
+          formDataObj["Status"] = "On Queue";
+
+          if (fileInput.files.length > 0) {
+            formDataObj.fileData = await uploadFile(fileInput.files[0]);
+          }
+
+          const response = await fetch(scriptURL, {
+            method: "POST",
+            body: JSON.stringify(formDataObj),
+            headers: { "Content-Type": "text/plain;charset=utf-8" }
+          });
+
+          const data = await response.json();
+          if (data.status === "success") {
+            messageDiv.innerHTML = `Success! Ticket ID: <strong>${newId}</strong> (Status: On Queue)`;
+            messageDiv.style.backgroundColor = "#48c78e";
+            messageDiv.style.color = "white";
+            form.reset();
+            fileNameDisplay.textContent = "No file selected";
+          } else { throw new Error(data.message); }
+        } catch (error) {
+          messageDiv.textContent = "Error: " + error.message;
+          messageDiv.style.backgroundColor = "#f14668";
+        } finally {
+          submitButton.disabled = false;
+          setTimeout(() => { messageDiv.style.display = "none"; }, 10000);
+        }
+      });
+
+      // 5. Data Retrieval & View GET
+        async function refreshData(loadAll = false) {
+          try {
+            const containerQ = document.getElementById("queue-container");
+            const containerF = document.getElementById("finished-container");
+            
+            containerQ.innerHTML = '<p class="has-text-centered p-5">Loading... Please wait.</p>';
+            containerF.innerHTML = '<p class="has-text-centered p-5">Loading... Please wait.</p>';
+
+            // If loadAll is true, append a query parameter to the URL
+            const url = loadAll ? `${scriptURL}?view=all` : scriptURL;
+
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            if (result.status === "success") {
+              renderViews(result.data);
+            }
+          } catch (error) {
+            console.error("Fetch Error:", error);
+          }
+        }
+
+      function renderViews(allData) {
+          // 1. Filter and Sort Queue: Added "For Deletion" to this list
+          const queueData = allData
+            .filter(row => row.Status === "On Queue" || row.Status === "On Going Fix" || row.Status === "For Deletion")
+            .sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
+
+          // 2. Filter and Sort Finished: LIFO (Newest Completed at the top)
+          const finishedData = allData
+            .filter(row => row.Status === "Fixed" || row.Status === "Not Fixed")
+            .sort((a, b) => new Date(b.Timestamp) - new Date(a.Timestamp));
+
+          // 3. Render to respective containers
+          renderSection("queue-container", groupDataByMonth(queueData), ["Ticket ID", "Client Name", "Department/Office", "Status"], true);
+          renderSection("finished-container", groupDataByMonth(finishedData), ["Ticket ID", "Client Name", "Status", "Remarks"], false);
+        }
+
+      function groupDataByMonth(dataArray) {
+        return dataArray.reduce((acc, row) => {
+          const date = new Date(row.Timestamp);
+          if (isNaN(date)) return acc;
+          const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+          if (!acc[monthYear]) acc[monthYear] = [];
+          acc[monthYear].push(row);
+          return acc;
+        }, {});
+      }
+
+      function renderSection(containerId, groupedData, columns) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        const sortedMonths = Object.keys(groupedData).sort((a, b) => new Date(b) - new Date(a));
+        if (sortedMonths.length === 0) {
+          container.innerHTML = '<p class="has-text-centered has-text-grey p-5">No records found.</p>';
+          return;
+        }
+
+        // Determine if this section should have the Action/Delete column
+        const isQueue = (containerId === "queue-container");
+
+        sortedMonths.forEach(month => {
+          const heading = document.createElement("h3");
+          heading.className = "title is-5 mt-5 mb-2 has-text-primary";
+          heading.innerText = month;
+          container.appendChild(heading);
+
+          const box = document.createElement("div");
+          box.className = "box p-0";
+          box.style.overflowX = "auto";
+          
+          let tableHtml = `<table class="table is-fullwidth is-striped is-hoverable">
+                          <thead><tr>`;
+          columns.forEach(col => tableHtml += `<th>${col}</th>`);
+          
+          // Only add the Header for Actions if it's the Queue tab
+          if (isQueue) tableHtml += `<th>Actions</th>`;
+          
+          tableHtml += `</tr></thead><tbody>`;
+
+          groupedData[month].forEach(row => {
+            tableHtml += `<tr>`;
+            columns.forEach(col => {
+              let val = row[col] || "";
+              if (col === "Status") {
+                tableHtml += `<td><span class="tag ${getStatusColor(val)}">${val}</span></td>`;
+              } else {
+                tableHtml += `<td>${val}</td>`;
+              }
+            });
+
+            // Only add the Delete Button logic if it's the Queue tab
+            if (isQueue) {
+              const client = (row["Client Name"] || "N/A").replace(/'/g, "\\'");
+              const dept = (row["Department/Office"] || "N/A").replace(/'/g, "\\'");
+
+              if (row["Status"] === "For Deletion") {
+                tableHtml += `<td><span class="tag is-light is-small">Pending Admin</span></td>`;
+              } else {
+                tableHtml += `<td>
+                    <button class="button is-small is-danger is-light" 
+                            onclick="deleteEntry('${row["Ticket ID"]}', '${client}', '${dept}')">
+                      <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                    </button>
+                  </td>`;
+              }
+            }
+
+            tableHtml += `</tr>`;
+          });
+
+          tableHtml += `</tbody></table>`;
+          box.innerHTML = tableHtml;
+          container.appendChild(box);
+        });
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case "On Queue": return "is-info";
+          case "On Going Fix": return "is-warning";
+          case "Fixed": return "is-success";
+          case "Not Fixed": return "is-danger";
+          case "For Deletion": return "is-dark";
+          default: return "is-light";
+        }
+      }
+
+      document.getElementById("cancel-button").addEventListener("click", () => {
+        form.reset();
+        fileNameDisplay.textContent = "No file selected";
+      });
+
+
+
+      async function deleteEntry(ticketId, clientName, department) {
+        const confirmationMessage = `Confirm request for deletion?\n\nClient: ${clientName}\nDepartment: ${department}\nTicket ID: ${ticketId}`;
+        
+        if (window.confirm(confirmationMessage)) {
+          try {
+            const response = await fetch(scriptURL, {
+              method: "POST",
+              body: JSON.stringify({
+                action: "delete",
+                ticketId: ticketId
+              }),
+              headers: { "Content-Type": "text/plain;charset=utf-8" }
+            });
+
+            const result = await response.json();
+            
+            if (result.status === "success") {
+              // The message is now specifically "sent to admin for deletion"
+              alert(result.message); 
+              refreshData(); 
+            } else {
+              alert("Error: " + result.message);
+            }
+          } catch (error) {
+            alert("Failed to process request: " + error.message);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
